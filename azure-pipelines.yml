@@ -14,7 +14,7 @@ variables:
 
   # Azure Container Registry connection details
   # IMPORTANT: Replace 'YourACRServiceConnectionName' with the actual name of your ACR Service Connection in Azure DevOps
-  dockerRegistryServiceConnection: 'YourACRServiceConnectionName' 
+  dockerRegistryServiceConnection: 'ACR-ingesoft5acrregistry-Connection' # Updated Service Connection Name
   acrLoginServer: 'ingesoft5acrregistry.azurecr.io' # Updated ACR Login Server
   imageRepository: 'auth-api' # Name for the image in ACR
   dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
@@ -30,6 +30,12 @@ stages:
     pool:
       vmImage: $(vmImageName)
     steps:
+    - script: |
+        echo "Attempting to resolve ACR hostname: $(acrLoginServer)"
+        nslookup $(acrLoginServer)
+        echo "DNS lookup finished."
+      displayName: 'Debug: DNS Lookup for ACR'
+
     - task: Docker@2
       displayName: Build and Push $(imageRepository)
       inputs:
