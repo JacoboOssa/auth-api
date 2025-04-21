@@ -17,7 +17,7 @@ variables:
   dockerRegistryServiceConnection: 'YourACRServiceConnectionName' 
   acrLoginServer: 'ingesoft5-bbfcc8fmg7bvghf9.azurecr.io'
   imageRepository: 'auth-api' # Name for the image in ACR
-  dockerfilePath: '$(Build.SourcesDirectory)/auth-api/Dockerfile'
+  dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
   buildContextPath: '$(Build.SourcesDirectory)/auth-api'
   tag: '$(Build.BuildId)'
 
