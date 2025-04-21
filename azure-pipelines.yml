@@ -34,7 +34,7 @@ stages:
       displayName: Build and Push $(imageRepository)
       inputs:
         command: buildAndPush
-        repository: $(imageRepository)
+        repository: '$(acrLoginServer)/$(imageRepository)' # Explicitly set full repository path
         dockerfile: $(dockerfilePath)
         buildContext: $(buildContextPath)
         containerRegistry: $(dockerRegistryServiceConnection)
