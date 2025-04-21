@@ -4,9 +4,6 @@ trigger:
   branches:
     include:
     - main # Or your default branch
-  paths:
-    include:
-    - auth-api/* # Trigger only if files in auth-api folder change
 
 resources:
 - repo: self
