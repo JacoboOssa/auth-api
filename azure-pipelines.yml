@@ -1,19 +1,46 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
+# azure-pipelines.yml for auth-api
 
 trigger:
-- main
+  branches:
+    include:
+    - main # Or your default branch
+  paths:
+    include:
+    - auth-api/* # Trigger only if files in auth-api folder change
 
-pool:
-  vmImage: ubuntu-latest
+resources:
+- repo: self
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+variables:
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+  # Azure Container Registry connection details
+  # IMPORTANT: Replace 'YourACRServiceConnectionName' with the actual name of your ACR Service Connection in Azure DevOps
+  dockerRegistryServiceConnection: 'YourACRServiceConnectionName' 
+  acrLoginServer: 'ingesoft5-bbfcc8fmg7bvghf9.azurecr.io'
+  imageRepository: 'auth-api' # Name for the image in ACR
+  dockerfilePath: '$(Build.SourcesDirectory)/auth-api/Dockerfile'
+  buildContextPath: '$(Build.SourcesDirectory)/auth-api'
+  tag: '$(Build.BuildId)'
+
+stages:
+- stage: Build
+  displayName: Build and Push stage
+  jobs:
+  - job: Build
+    displayName: Build and Push Auth API image
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: Docker@2
+      displayName: Build and Push $(imageRepository)
+      inputs:
+        command: buildAndPush
+        repository: $(imageRepository)
+        dockerfile: $(dockerfilePath)
+        buildContext: $(buildContextPath)
+        containerRegistry: $(dockerRegistryServiceConnection)
+        tags: |
+          $(tag)
+          latest
