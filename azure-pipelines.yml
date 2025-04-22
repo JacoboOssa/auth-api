@@ -36,13 +36,31 @@ stages:
         echo "DNS lookup finished."
       displayName: 'Debug: DNS Lookup for ACR'
 
+    # Login to ACR
     - task: Docker@2
-      displayName: Build and Push $(imageRepository)
+      displayName: Login to ACR
       inputs:
-        command: buildAndPush
-        repository: '$(acrLoginServer)/$(imageRepository)' # Explicitly set full repository path
+        command: login
+        containerRegistry: $(dockerRegistryServiceConnection)
+
+    # Build the image
+    - task: Docker@2
+      displayName: Build image
+      inputs:
+        command: build
+        repository: $(imageRepository) # Build locally first
         dockerfile: $(dockerfilePath)
         buildContext: $(buildContextPath)
+        tags: |
+          $(tag)
+          latest
+
+    # Push the image
+    - task: Docker@2
+      displayName: Push image
+      inputs:
+        command: push
+        repository: $(imageRepository) # Use the local image name built previously
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
           $(tag)
