@@ -1,10 +1,8 @@
-# azure-pipelines.yml for auth-api
-
 trigger:
   branches:
     include:
     - main # Or your default branch
-
+  
 resources:
 - repo: self
 
@@ -15,11 +13,16 @@ variables:
   # Azure Container Registry connection details
   # IMPORTANT: Replace 'YourACRServiceConnectionName' with the actual name of your ACR Service Connection in Azure DevOps
   dockerRegistryServiceConnection: 'ACR-ingesoft5acrregistry-Connection' # Updated Service Connection Name
-  acrLoginServer: 'ingesoft5acrregistry.azurecr.io' # Updated ACR Login Server
+  acrLoginServer: 'testacrgyvpcp.azurecr.io' # Updated ACR Login Server
   imageRepository: 'auth-api' # Name for the image in ACR
   dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
   buildContextPath: '$(Build.SourcesDirectory)'
   tag: '$(Build.BuildId)'
+  
+  # Container App
+  containerAppName: 'test-auth-api-ca' # Nombre exacto de tu Container App
+  resourceGroupName: 'rg-app-testing'  # RG donde está la Container App
+  azureResourceManagerConnection: 'AzureRM-ContainerApps' # Connection a tu suscripción de Azure
 
 stages:
 - stage: Build
@@ -30,12 +33,6 @@ stages:
     pool:
       vmImage: $(vmImageName)
     steps:
-    - script: |
-        echo "Attempting to resolve ACR hostname: $(acrLoginServer)"
-        nslookup $(acrLoginServer)
-        echo "DNS lookup finished."
-      displayName: 'Debug: DNS Lookup for ACR'
-
     # Login to ACR
     - task: Docker@2
       displayName: Login to ACR
@@ -65,3 +62,23 @@ stages:
         tags: |
           $(tag)
           latest
+    
+    # Deploy a Container App
+    - task: AzureCLI@2
+      displayName: Deploy to Azure Container App
+      inputs:
+        azureSubscription: $(azureResourceManagerConnection)
+        scriptType: bash
+        scriptLocation: inlineScript
+        inlineScript: |
+          echo "Desplegando nueva imagen a Container App...."
+          az containerapp update \
+            --name $(containerAppName) \
+            --resource-group $(resourceGroupName) \
+            --image $(acrLoginServer)/$(imageRepository):$(tag) 
+          
+          echo "Actualizando puerto de destino (target port) del ingress..."
+          az containerapp ingress update \
+            --name $(containerAppName) \
+            --resource-group $(resourceGroupName) \
+            --target-port 8000 
