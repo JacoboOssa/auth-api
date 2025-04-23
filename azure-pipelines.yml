@@ -71,7 +71,7 @@ stages:
         scriptType: bash
         scriptLocation: inlineScript
         inlineScript: |
-          echo "Desplegando nueva imagen a Container App..."
+          echo "Desplegando nueva imagen a Container App...."
           az containerapp update \
             --name $(containerAppName) \
             --resource-group $(resourceGroupName) \
