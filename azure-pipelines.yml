@@ -76,9 +76,3 @@ stages:
             --name $(containerAppName) \
             --resource-group $(resourceGroupName) \
             --image $(acrLoginServer)/$(imageRepository):$(tag) 
-          
-          #echo "Actualizando puerto de destino (target port) del ingress..."
-          #az containerapp ingress update \
-            #--name $(containerAppName) \
-            #--resource-group $(resourceGroupName) \
-            #--target-port 8000 
