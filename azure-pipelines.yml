@@ -12,7 +12,7 @@ variables:
 
   # Azure Container Registry connection details
   # IMPORTANT: Replace 'YourACRServiceConnectionName' with the actual name of your ACR Service Connection in Azure DevOps
-  dockerRegistryServiceConnection: 'ACR-ingesoft5acrregistry-Connection' # Updated Service Connection Name
+  dockerRegistryServiceConnection: 'ACR-prod-acrregistry-Connection' # Updated Service Connection Name
   acrLoginServer: 'prodacrnq1ppt.azurecr.io' # Updated ACR Login Server
   imageRepository: 'auth-api' # Name for the image in ACR
   dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
