@@ -22,7 +22,7 @@ variables:
   # Container App
   containerAppName: 'prod-auth-api-ca' # Nombre exacto de tu Container App
   resourceGroupName: 'rg-app-prod'  # RG donde está la Container App
-  azureResourceManagerConnection: 'AzureRM-microservice' # Connection a tu suscripción de Azure
+  azureResourceManagerConnection: 'azureRM-prod' # Connection a tu suscripción de Azure
 
 stages:
 - stage: Build
